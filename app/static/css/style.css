@@ -1,0 +1,27 @@
+.chart-container {
+    height: 300px;
+    margin-top: 1rem;
+}
+
+.card {
+    height: 100%;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.lead {
+    color: #666;
+}
+
+main {
+    padding: 2rem 0;
+}
+
+.navbar {
+    margin-bottom: 2rem;
+}

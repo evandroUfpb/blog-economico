@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1>Bem-vindo ao Blog de Evandro Farias</h1>
+        <p class="lead">
+            Aqui você encontrará análises e visualizações de dados econômicos do Brasil, Nordeste e Paraíba.
+            São utilizadas informações do SIDRA (IBGE), IPEA Data e Banco Central. Mais informações podem ser
+            encontradas <a href="https://github.com/evandrofarias/blog-economico">aqui </a>, no GitHub ou 
+            por E-mail: <a href="mailto:evandro.farias@academico.ufpb.br">evandro.farias@academico.ufpb.br</a>.
+        </p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">PIB</h5>
+                <p class="card-text">Produto Interno Bruto brasileiro.</p>
+                <div id="pib-chart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">IPCA</h5>
+                <p class="card-text">Índice de Preços ao Consumidor Amplo.</p>
+                <div id="ipca-chart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">SELIC</h5>
+                <p class="card-text">Taxa básica de juros da economia.</p>
+                <div id="selic-chart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

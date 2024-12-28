@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1>Dashboard Econômico</h1>
+        <p class="lead">Visualização interativa dos principais indicadores econômicos</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">PIB - Produto Interno Bruto</h5>
+                <div id="pib-chart-full" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">IPCA - Inflação</h5>
+                <div id="ipca-chart-full" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Taxa SELIC</h5>
+                <div id="selic-chart-full" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
