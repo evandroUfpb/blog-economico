@@ -4,7 +4,7 @@ Blog interativo com visualizações de dados econômicos do Brasil, Nordeste e P
 
 ## Sobre o Projeto
 
-Este projeto é um blog econômico desenvolvido em Python usando Flask, que apresenta visualizações interativas de dados econômicos. Os dados são obtidos de diferentes fontes:
+Este projeto é um blog econômico desenvolvido em Python usando Flask, que apresenta visualizações interativas de dados econômicos do Brasil, Nordeste e Paraíba. Os dados são obtidos de diferentes fontes:
 
 - SIDRA (IBGE): Dados do PIB
 - Banco Central do Brasil: Dados do IPCA e SELIC
