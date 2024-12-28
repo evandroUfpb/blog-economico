@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4 text-center mb-4">
+            <!-- Adicione sua foto aqui -->
+            <img src="{{ url_for('static', filename='img/imagem_perfiljpg') }}" 
+                 class="rounded-circle img-fluid mb-3" 
+                 alt="Evandro Farias"
+                 style="max-width: 250px; border: 3px solid #2980b9;">
+            
+            <!-- Redes Sociais -->
+            <div class="social-links mt-3">
+                <a href="https://github.com/evandroUfpb" class="mx-2" target="_blank">
+                    <i class="fab fa-github fa-2x"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/evandro-farias-625939a2" class="mx-2" target="_blank">
+                    <i class="fab fa-linkedin fa-2x"></i>
+                </a>
+                <a href="mailto:evdrocha@gmail.com" class="mx-2">
+                    <i class="fas fa-envelope fa-2x"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <h2 class="mb-4">Evandro Farias</h2>
+            <h5 class="text-muted mb-4">Economista | Pesquisador | Analista de Dados</h5>
+            
+            <div class="mb-4">
+                <h4>Sobre Mim</h4>
+                <p>Sou economista com foco em análise de dados e pesquisa econômica. 
+                   Atualmente, desenvolvo análises sobre a economia reginal, com ênfase 
+                   especial no Nordeste e na Paraíba.</p>
+            </div>
+            
+            <div class="mb-4">
+                <h4>Formação Acadêmica</h4>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <strong>Mestrado em Gestão de Organizações</strong>
+                        <br>Universidade Federal da Paraíba
+                        <br><small class="text-muted">2020 - Presente</small>
+                    </li>
+                    <!-- Adicione outras formações aqui -->
+                </ul>
+            </div>
+            
+            <div class="mb-4">
+                <h4>Áreas de Interesse</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul>
+                            <li>Economia Regional</li>
+                            <li>Análise de Dados Econômicos</li>
+                            <li>Desenvolvimento Econômico</li>
+                            <li>Economia do Nordeste</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h4>Projetos e Publicações</h4>
+                <ul>
+                    <li>Blog Econômico - Visualização de dados econômicos</li>
+                    <!-- Adicione outros projetos aqui -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
