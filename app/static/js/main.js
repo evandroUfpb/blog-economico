@@ -115,9 +115,23 @@ function loadSELICData() {
         .catch(error => console.error('Erro ao carregar dados da SELIC:', error));
 }
 
+
+// Função para carregar dados do câmbio
+function loadCambioData() {
+    fetch('/api/cambio')
+        .then(response => response.json())
+        .then(data => {
+            createChart('cambio-chart', data, 'Taxa de Câmbio - PTAX');
+        })
+        .catch(error => {
+            console.error('Erro ao carregar dados do câmbio:', error);
+        });
+}
+
 // Carregar dados quando a página carregar
 document.addEventListener('DOMContentLoaded', function() {
     loadPIBData();
     loadIPCAData();
     loadSELICData();
+    loadCambioData();
 });
