@@ -1,5 +1,5 @@
 /// Função para criar gráficos usando Plotly
-function createChart(elementId, data, title) {
+function createChart(elementId, data, title, customConfig = {}) {
     const trace = {
         x: data.dates,
         y: data.values,
@@ -14,6 +14,24 @@ function createChart(elementId, data, title) {
         hovertemplate: '%{y:.2f}<br>%{x}<extra></extra>'
     };
     
+    // Configurações padrão para o eixo x
+    const defaultXAxisConfig = {
+        title: 'Período',
+        tickangle: -45,
+        gridcolor: '#f7f7f7',
+        showgrid: true,
+        zeroline: false,
+        dtick: 'M48', //determina o intervalo de 4 anos (48 meses)
+        tickformat: '%m/%Y',
+        tickfont: { family: 'Arial', size: 11 }
+    };
+
+    // Configurações específicas para desocupação
+    const desocupacaoXAxisConfig = title.includes('Desocupação') ? {
+        ...defaultXAxisConfig,
+        dtick: 'M3', // Intervalo de 3 meses (trimestral)
+        tickformat: '%Y-Q%q' // Formato para mostrar trimestres
+    } : defaultXAxisConfig;
 
     const layout = {
         title: {
@@ -22,16 +40,7 @@ function createChart(elementId, data, title) {
                 size: 24
             }
         },
-        xaxis: {
-            title: 'Período',
-            tickangle: -45,
-            gridcolor: '#f7f7f7',
-            showgrid: true,
-            zeroline: false,
-            dtick: 'M48', //determina o intervalo de 4 anos (48 meses)
-            tickformat: '%m/%Y',
-            tickfont: { family: 'Arial', size: 11 }
-        },
+        xaxis: customConfig.xaxis || desocupacaoXAxisConfig,
         yaxis: {
             title: data.unit,
             gridcolor: '#eee'
@@ -138,6 +147,28 @@ function loadCambioData() {
         });
 }
 
+// Função para carregar dados de Desocupação
+function loadDesocupacaoData() {
+    fetch('/api/desocupacao')
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                console.error(data.message);
+                return;
+            }
+            // Criar gráfico na página inicial
+            if (document.getElementById('desocupacao-chart')) {
+                createChart('desocupacao-chart', data, 'Taxa de Desocupação - Trimestral');
+            }
+            // Criar gráfico no dashboard
+            if (document.getElementById('desocupacao-chart-full')) {
+                createChart('desocupacao-chart-full', data, 'Taxa de Desocupação - Visão Detalhada');
+            }
+        })
+        .catch(error => console.error('Erro ao carregar dados de Desocupacao:', error));
+}
+
+
 // Carregar dados quando a página carregar
 document.addEventListener('DOMContentLoaded',
     function() {
@@ -147,4 +178,5 @@ document.addEventListener('DOMContentLoaded',
         loadIPCAData();
         loadSELICData();
         loadCambioData();
+        loadDesocupacaoData();
     });

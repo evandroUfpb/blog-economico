@@ -38,7 +38,14 @@ def get_cambio_data():
     data = bcb.get_cambio_data()
     if data is None:
         return jsonify({'message': 'Erro ao obter dados da Câmbio'})
-    return jsonify(data)    
+    return jsonify(data)
+
+@app.route('/api/desocupacao')
+def get_desocupacao_data():
+    data = sidra.get_desocupacao_data()
+    if data is None:
+        return jsonify({'message': 'Erro ao obter dados do Desocupacao'})
+    return jsonify(data)
 
 @app.route('/about')
 def about():
