@@ -1,7 +1,45 @@
 import sidrapy
 import pandas as pd
-from datetime import datetime
+import logging
+import functools
+import time
 
+def retry(max_attempts=3, delay_seconds=1):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            attempts = 0
+            while attempts < max_attempts:
+                try:
+                    result = func(*args, **kwargs)
+                    
+                    # Validação adicional dos dados
+                    if result is None or (isinstance(result, (list, dict)) and len(result) == 0):
+                        raise ValueError("Dados inválidos ou vazios")
+                    
+                    return result
+                
+                except Exception as e:
+                    attempts += 1
+                    logging.warning(f"Tentativa {attempts} falhou para {func.__name__}: {e}")
+                    
+                    if attempts >= max_attempts:
+                        logging.error(f"Falha após {max_attempts} tentativas para {func.__name__}")
+                        return None
+                    
+                    time.sleep(delay_seconds)
+        
+        return wrapper
+    return decorator
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s: %(message)s',
+    filename='data_fetch.log'  # Log em arquivo
+)
+
+@retry(max_attempts=3, delay_seconds=2)
 def get_pib_data(period_start=None, period_end=None):
     """
     Obtém dados do PIB trimestral do SIDRA/IBGE
@@ -13,11 +51,14 @@ def get_pib_data(period_start=None, period_end=None):
                                    territorial_level="1",  # Brasil
                                    ibge_territorial_code="1",
                                    classification = "11255/90707",
-                                   #variable="93404",  # PIB a preços de mercado
                                    period="all")  # Toda a série histórica
         
         # Converte para DataFrame
         pib_raw = pd.DataFrame(pib_raw)
+        
+        # Validações adicionais
+        if pib_raw is None or pib_raw.empty:
+            raise ValueError("Dados do PIB não puderam ser obtidos")
         
         # Substitui as colunas pela primeira observação
         pib_raw.columns = pib_raw.iloc[0]
@@ -64,12 +105,10 @@ def get_pib_data(period_start=None, period_end=None):
         return result
     
     except Exception as e:
-        print(f"Erro ao buscar dados do PIB: {e}")
-        print("Dados recebidos:", pib_raw if 'pib_raw' in locals() else None)
+        logging.error(f"Erro ao buscar dados do PIB: {e}")
         return None
 
-# Taxa de Desocupação
-
+@retry(max_attempts=3, delay_seconds=2)
 def get_desocupacao_data(period_start=None, period_end=None):
     """
     Obtém dados do Desocupação do SIDRA/IBGE
@@ -130,5 +169,5 @@ def get_desocupacao_data(period_start=None, period_end=None):
         return result
     
     except Exception as e:
-        print(f"Erro ao buscar dados do Desocupação: {e}")
+        logging.error(f"Erro ao buscar dados do Desocupação: {e}")
         return None
