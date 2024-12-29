@@ -79,6 +79,16 @@ function loadPIBData() {
 
 // Função para carregar dados do IPCA
 function loadIPCAData() {
+    //linhas adicionadas para o cache
+    const cacheKey = 'ipca_data';
+    const cachedData = localStorage.getItem(cacheKey);
+    const cacheExpiry = localStorage.getItem(cacheKey + '_expiry');
+    
+    if (cachedData && cacheExpiry && Date.now() < parseInt(cacheExpiry)) {
+        createChart('ipca-chart', JSON.parse(cachedData), 'IPCA - Variação Mensal');
+        return;
+    }
+    // fim das linhas adicionadas
     fetch('/api/ipca')
         .then(response => response.json())
         .then(data => {
@@ -129,9 +139,12 @@ function loadCambioData() {
 }
 
 // Carregar dados quando a página carregar
-document.addEventListener('DOMContentLoaded', function() {
-    loadPIBData();
-    loadIPCAData();
-    loadSELICData();
-    loadCambioData();
-});
+document.addEventListener('DOMContentLoaded',
+    function() {
+        //limpa cache local
+        localStorage.clear();
+        loadPIBData();
+        loadIPCAData();
+        loadSELICData();
+        loadCambioData();
+    });
