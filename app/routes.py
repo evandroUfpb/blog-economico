@@ -34,7 +34,7 @@ def get_selic_data():
     return jsonify(data)
 
 @app.route('/api/cambio')
-def get_cambio():
+def get_cambio_data():
     data = bcb.get_cambio_data()
     if data is None:
         return jsonify({'message': 'Erro ao obter dados da Câmbio'})
