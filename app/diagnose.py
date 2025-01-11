@@ -1,18 +1,24 @@
 import sys
-import os
+import platform
 
 def diagnose():
-    print("Python Environment Diagnosis:")
-    print("----------------------------")
+    print("Sistema de Diagnóstico:")
+    print("----------------------")
     print(f"Python Version: {sys.version}")
-    print(f"Current Working Directory: {os.getcwd()}")
-    print(f"Python Path: {sys.path}")
+    print(f"Platform: {platform.platform()}")
+    print(f"Python Implementation: {platform.python_implementation()}")
     
     try:
-        import flask
-        print(f"Flask Version: {flask.__version__}")
+        import numpy
+        print(f"NumPy Version: {numpy.__version__}")
     except ImportError:
-        print("Flask not installed")
+        print("NumPy não instalado")
+    
+    try:
+        import pandas
+        print(f"Pandas Version: {pandas.__version__}")
+    except ImportError:
+        print("Pandas não instalado")
 
 if __name__ == "__main__":
     diagnose()
