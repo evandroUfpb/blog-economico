@@ -1,7 +1,8 @@
 from flask import Flask
-#from app.utils.cache import init_cache
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dev-key-123'
 
-from app import routes
+# Importações locais para evitar circular import
+from app.utils import routes
+routes.init_routes(app)

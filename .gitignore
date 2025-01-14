@@ -23,7 +23,7 @@ var/
 # Virtual Environment
 venv/
 ENV/
-econ_blog/
+
 
 # IDE
 .idea/
@@ -44,3 +44,9 @@ instance/
 # Sistema operacional
 .DS_Store
 Thumbs.db
+
+# aquivos indesejavies
+routes_bkp.py
+diagnose.py
+main_bkp.py
+bcb_bkp.py

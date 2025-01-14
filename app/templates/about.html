@@ -3,72 +3,66 @@
 {% block content %}
 <div class="container py-5">
     <div class="row">
-        <div class="col-md-4 text-center mb-4">
-            <!-- Adicione sua foto aqui -->
-            <img src="{{ url_for('static', filename='img/imagem_perfil.jpeg') }}" 
-                 class="rounded-circle img-fluid mb-3" 
-                 alt="Evandro Farias"
-                 style="max-width: 250px; border: 3px solid #2980b9;">
-            
-            <!-- Redes Sociais -->
-            <div class="social-links mt-3">
-                <a href="https://github.com/evandroUfpb" class="mx-2" target="_blank">
-                    <i class="fab fa-github fa-2x"></i>
-                </a>
-                <a href="https://www.linkedin.com/in/evandro-farias-625939a2" class="mx-2" target="_blank">
-                    <i class="fab fa-linkedin fa-2x"></i>
-                </a>
-                <a href="mailto:evdrocha@gmail.com" class="mx-2">
-                    <i class="fas fa-envelope fa-2x"></i>
-                </a>
-            </div>
-        </div>
-        
-        <div class="col-md-8">
-            <h2 class="mb-4">Evandro Farias</h2>
-            <h5 class="text-muted mb-4">Economista | Pesquisador | Analista de Dados</h5>
-            
-            <div class="mb-4">
-                <h4>Sobre Mim</h4>
-                <p>Sou economista com foco em análise de dados e pesquisa econômica. 
-                   Atualmente, desenvolvo análises sobre a economia reginal, com ênfase 
-                   especial no Nordeste e na Paraíba.</p>
-            </div>
-            
-            <div class="mb-4">
-                <h4>Formação Acadêmica</h4>
-                <ul class="list-unstyled">
-                    <li class="mb-2">
-                        <strong>Mestrado em Gestão de Organizações</strong>
-                        <br>Universidade Federal da Paraíba
-                        <br><small class="text-muted">2013-2015</small>
-                    </li>
-                    <!-- Adicione outras formações aqui -->
-                </ul>
-            </div>
-            
-            <div class="mb-4">
-                <h4>Áreas de Interesse</h4>
-                <div class="row">
-                    <div class="col-md-6">
-                        <ul>
-                            <li>Economia Regional</li>
-                            <li>Análise de Dados Econômicos</li>
-                            <li>Desenvolvimento Econômico</li>
-                            <li>Economia do Nordeste e Paraíba</li>
-                            <li>Políticas Publicas</li>
-                            <li>Indicadores Socioeconômicos e Educacionais</li>
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h1 class="text-center mb-0">Sobre o Autor</h1>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="https://avatars.githubusercontent.com/u/seu-username" 
+                             alt="Evandro Farias" 
+                             class="rounded-circle mb-3" 
+                             style="width: 200px; height: 200px; object-fit: cover;">
+                        <h2>Evandro Farias</h2>
+                        <p class="text-muted">Economista | Pesquisador | Desenvolvedor</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h3>Formação Acadêmica</h3>
+                        <ul class="list-unstyled">
+                            <li>
+                                <strong>Graduação em Economia</strong><br>
+                                Universidade Federal da Paraíba (UFPB)
+                            </li>
+                            <li>
+                                <strong>Mestrado em Organizações Aprendentes</strong><br>
+                                Universidade Federal da Paraíba (UFPB)
+                            </li>
+                            <li class="mt-2">
+                                <strong>Pesquisador</strong><br>
+                                Grupo de Pesquisa em Economia Regional e Urbana <p>
+                                Membro do Fórum Celso Furtado de Desenvolvimento da Paraíba
+                            </li>
                         </ul>
                     </div>
+                    
+                    <div class="mb-4">
+                        <h3>Interesses de Pesquisa</h3>
+                        <span class="badge bg-secondary me-2">Economia Regional</span>
+                        <span class="badge bg-secondary me-2">Desenvolvimento Econômico</span>
+                        <span class="badge bg-secondary me-2">Análise de Dados</span>
+                        <span class="badge bg-secondary me-2">Python</span>
+                        <span class="badge bg-secondary me-2">Visualização de Dados</span>
+                    </div>
+                    
+                    <div class="text-center">
+                        <h3>Contato</h3>
+                        <div class="d-flex justify-content-center">
+                            <a href="https://www.linkedin.com/in/evandro-farias-625939a2"
+                            class="btn btn-outline-dark me-3">
+                            <i class="fab fa-linkedin"></i> LinkedIn</a>    
+                            <a href="https://github.com/evandroUfpb" 
+                            class="btn btn-outline-dark me-3">
+                            <i class="fab fa-github"></i> GitHub
+                            </a>
+                            <a href="mailto:evandro.farias@academico.ufpb.br" 
+                            class="btn btn-outline-dark me-3">
+                            <i class="far fa-envelope"></i> E-mail
+                            </a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div>
-                <h4>Projetos e Publicações</h4>
-                <ul>
-                    <li>Blog Econômico - Visualização de dados econômicos</li>
-                    <!-- Adicione outros projetos aqui -->
-                </ul>
             </div>
         </div>
     </div>

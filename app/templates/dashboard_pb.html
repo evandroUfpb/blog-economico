@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Dashboard - PIB Paraíba</h1>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">PIB Anual - Paraíba</h3>
+                </div>
+                <div class="card-body">
+                    <div id="pib-chart-pb-full" style="width: 100%; height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function loadPIBDataPB() {
+            fetch('/api/pib_pb_data')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Dados PIB Paraíba recebidos:', data);
+                    
+                    const valuesInMillions = data.values.map(value => value / 1_000_000);
+                    const xValues = data.dates.map((_, index) => index);
+                    
+                    const trace = {
+                        x: xValues,
+                        y: valuesInMillions,
+                        mode: 'lines+markers',
+                        name: 'PIB Paraíba',
+                        line: { color: '#2980b9' },
+                        text: data.dates.map((date, index) => 
+                            `Ano ${date}: R$ ${valuesInMillions[index].toLocaleString('pt-BR', {minimumFractionDigits: 1, maximumFractionDigits: 1})} milhões`
+                        ),
+                        hovertemplate: '%{text}<extra></extra>'
+                    };
+
+                    const layout = {
+                        title: 'PIB Anual - Paraíba',
+                        xaxis: {
+                            title: 'Ano',
+                            type: 'linear',
+                            tickmode: 'array',
+                            tickvals: xValues,
+                            ticktext: data.dates
+                        },
+                        yaxis: {
+                            title: 'Valor (Milhões de R$)',
+                            tickformat: ',.1f',
+                            ticksuffix: ' M'
+                        }
+                    };
+
+                    Plotly.newPlot('pib-chart-pb-full', [trace], layout);
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar dados do PIB da Paraíba:', error);
+                });
+        }
+
+        loadPIBDataPB();
+    });
+</script>
+{% endblock %}

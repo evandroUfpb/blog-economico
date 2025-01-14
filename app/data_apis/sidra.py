@@ -1,173 +1,188 @@
-import sidrapy
-import pandas as pd
 import logging
-import functools
-import time
+import requests
+import pandas as pd
+from tenacity import retry, stop_after_attempt, wait_fixed
 
-def retry(max_attempts=3, delay_seconds=1):
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            attempts = 0
-            while attempts < max_attempts:
-                try:
-                    result = func(*args, **kwargs)
-                    
-                    # Validação adicional dos dados
-                    if result is None or (isinstance(result, (list, dict)) and len(result) == 0):
-                        raise ValueError("Dados inválidos ou vazios")
-                    
-                    return result
-                
-                except Exception as e:
-                    attempts += 1
-                    logging.warning(f"Tentativa {attempts} falhou para {func.__name__}: {e}")
-                    
-                    if attempts >= max_attempts:
-                        logging.error(f"Falha após {max_attempts} tentativas para {func.__name__}")
-                        return None
-                    
-                    time.sleep(delay_seconds)
-        
-        return wrapper
-    return decorator
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s: %(message)s',
-    filename='data_fetch.log'  # Log em arquivo
-)
-
-@retry(max_attempts=3, delay_seconds=2)
-def get_pib_data(period_start=None, period_end=None):
-    """
-    Obtém dados do PIB trimestral do SIDRA/IBGE
-    Tabela 1621 - PIB a preços de mercado
-    """
+#---------------------- Função para pegar o PIB do Brasil ---------------------
+def get_pib_data():
     try:
-        # Busca os dados do PIB trimestral
-        pib_raw = sidrapy.get_table(table_code="1621",  # Tabela do PIB trimestral
-                                   territorial_level="1",  # Brasil
-                                   ibge_territorial_code="1",
-                                   classification = "11255/90707",
-                                   period="all")  # Toda a série histórica
+        logging.info("Iniciando busca de dados de PIB")
         
-        # Converte para DataFrame
-        pib_raw = pd.DataFrame(pib_raw)
+        url = "https://apisidra.ibge.gov.br/values/t/5938/n1/all/v/37/p/all?formato=json"
         
-        # Validações adicionais
-        if pib_raw is None or pib_raw.empty:
-            raise ValueError("Dados do PIB não puderam ser obtidos")
+        response = requests.get(url, timeout=10)
         
-        # Substitui as colunas pela primeira observação
-        pib_raw.columns = pib_raw.iloc[0]
+        if response.status_code != 200:
+            logging.error(f"Erro na requisição de PIB: {response.status_code}")
+            return None
         
-        # Retira a primeira observação
-        pib_raw = pib_raw.iloc[1:, :]
+        data = response.json()
         
-        # Substitui '..' por NaN e converte para float
-        pib_raw['Valor'] = pib_raw['Valor'].replace('..', pd.NA)
-        pib_raw['Valor'] = pd.to_numeric(pib_raw['Valor'], errors='coerce')
+        if not data:
+            logging.error("Dados de PIB retornados estão vazios")
+            return None
         
-        # Remove linhas com valores nulos
-        pib_raw = pib_raw.dropna(subset=['Valor'])
+        dates = []
+        values = []
         
-        # Renomeia e seleciona as colunas
-        pib = pib_raw.rename(columns={"Valor": "pib",
-                                    "Trimestre (Código)": "date"})[['pib', 'date']]
+        for item in data:
+            try:
+                # Converter ano para datetime
+                year_str = item.get('D3N', '')
+                
+                # Converter valor para float em milhões
+                value_str = item.get('V', '')
+                value = float(value_str) / 1_000_000_000 if value_str else None
+                
+                if year_str and value is not None:
+                    dates.append(year_str)
+                    values.append(round(value, 2))
+            except Exception as e:
+                logging.error(f"Erro ao processar item de PIB: {e}")
         
-        # Procedimento para lidar com a coluna de trimestre para transformar em data
-        pib['date'] = pib['date'].str[:-2] + pib['date'].str[-2:].replace({
-            "01": "03",
-            "02": "06",
-            "03": "09",
-            "04": "12"
-        })
+        if not dates or not values:
+            logging.error("Nenhum dado válido de PIB encontrado")
+            return None
         
-        # Transforma em formato date a coluna de data e insere no índice
-        pib.index = pd.to_datetime(pib['date'], format="%Y%m")
-        
-        # Retira a coluna de data
-        pib = pib.drop(columns=['date'])
-        
-        # Ordena o índice
-        pib = pib.sort_index()
-        
-        # Prepara o resultado para o gráfico
-        result = {
-            'dates': pib.index.strftime('%Y-%m-%d').tolist(),
-            'values': pib['pib'].tolist(),
-            'label': 'PIB Trimestral',
-            'unit': 'Milhões de Reais'
+        return {
+            'dates': dates,
+            'values': values,
+            'label': 'Produto Interno Bruto',
+            'unit': ''
         }
-        
-        return result
     
     except Exception as e:
-        logging.error(f"Erro ao buscar dados do PIB: {e}")
+        logging.error(f"Erro ao buscar dados de PIB: {e}")
         return None
 
-@retry(max_attempts=3, delay_seconds=2)
-def get_desocupacao_data(period_start=None, period_end=None):
-    """
-    Obtém dados do Desocupação do SIDRA/IBGE
-    Tabela 4099 - Taxa de Desocupação
-    """
+
+
+# ------------------------- Função para pegar valores do PIB da Paraíba -----------------
+        
+def get_pib_data_pb():
     try:
-        # Busca os dados da taxa de desocupação trimestral
-        desocupacao_raw = sidrapy.get_table(table_code="4099",  # Tabela do desocupação trimestral
-                                   territorial_level="1",  # Brasil
-                                   variable="4099",
-                                   ibge_territorial_code="1",
-                                   period="all")  # Toda a série histórica
+        logging.info("Iniciando busca de dados de PIB da Paraíba")
         
-        # Converte para DataFrame
-        desocupacao_raw = pd.DataFrame(desocupacao_raw)
+        # Atualizar URL para o formato correto
+        url = f"{SIDRA_BASE_URL}/t/5938/v/37/p/all/c1/2607/d/last%201"
         
-        # Substitui as colunas pela primeira observação
-        desocupacao_raw.columns = desocupacao_raw.iloc[0]
+        logging.info(f"URL da requisição de PIB da Paraíba: {url}")
         
-        # Retira a primeira observação
-        desocupacao_raw = desocupacao_raw.iloc[1:, :]
-        
-        # Substitui '..' por NaN e converte para float
-        desocupacao_raw['Valor'] = desocupacao_raw['Valor'].replace('..', pd.NA)
-        desocupacao_raw['Valor'] = pd.to_numeric(desocupacao_raw['Valor'], errors='coerce')
-        
-        # Remove linhas com valores nulos
-        desocupacao_raw = desocupacao_raw.dropna(subset=['Valor'])
-        
-        # Renomeia e seleciona as colunas
-        desocupacao = desocupacao_raw.rename(columns={"Valor": "tx_desocupacao",
-                                    "Trimestre (Código)": "date"})[['tx_desocupacao', 'date']]
-        
-        # Procedimento para lidar com a coluna de trimestre para transformar em data
-        desocupacao['date'] = desocupacao['date'].str[:-2] + desocupacao['date'].str[-2:].replace({
-            "01": "03",
-            "02": "06",
-            "03": "09",
-            "04": "12"
-        })
-        
-        # Transforma em formato date a coluna de data e insere no índice
-        desocupacao.index = pd.to_datetime(desocupacao['date'], format="%Y%m")
-        
-        # Retira a coluna de data
-        desocupacao = desocupacao.drop(columns=['date'])
-        
-        # Ordena o índice
-        desocupacao = desocupacao.sort_index()
-        
-        # Prepara o resultado para o gráfico
-        result = {
-            'dates': desocupacao.index.strftime('%Y-%m-%d').tolist(),
-            'values': desocupacao['tx_desocupacao'].tolist(),
-            'label': 'Taxa de Desocupação - Trimestral'
+        # Adicionar cabeçalhos para simular navegador
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         
-        return result
+        response = requests.get(url, headers=headers, timeout=10)
+        
+        logging.info(f"Código de status do PIB da Paraíba: {response.status_code}")
+        logging.info(f"Conteúdo da resposta: {response.text[:500]}...")  # Mostrar primeiros 500 caracteres
+        
+        if response.status_code != 200:
+            logging.error(f"Erro na requisição de PIB da Paraíba: {response.status_code}")
+            logging.error(f"Conteúdo da resposta completo: {response.text}")
+            return None
+        
+        data = response.json()
+        
+        if not data:
+            logging.error("Dados de PIB da Paraíba retornados estão vazios")
+            return None
+        
+        dates = []
+        values = []
+        
+        for item in data:
+            try:
+                date_str = item.get('D2N', '')
+                value = item.get('V', 0)
+                
+                if date_str and value is not None:
+                    dates.append(date_str)
+                    values.append(float(value))
+            except Exception as e:
+                logging.error(f"Erro ao processar item de PIB da Paraíba: {e}")
+        
+        logging.info(f"Dados de PIB da Paraíba processados: {len(dates)} registros")
+        
+        if not dates or not values:
+            logging.error("Nenhum dado válido de PIB da Paraíba encontrado")
+            return None
+        
+        return {
+            'dates': dates,
+            'values': values,
+            'label': 'PIB da Paraíba',
+            'unit': 'R$ milhões'
+        }
+    
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Erro de conexão ao buscar PIB da Paraíba: {e}")
+        return None
+    except Exception as e:
+        logging.error(f"Erro inesperado ao buscar dados de PIB da Paraíba: {e}")
+        return None
+
+# --------------- Função para coletar dados da Desocupação do Brasil ----------
+
+def get_desocupacao_data():
+    try:
+        logging.info("Iniciando busca de dados de Desocupação")
+        
+        url = "https://apisidra.ibge.gov.br/values/t/4099/n1/all/v/4099/p/all?formato=json"
+        
+        response = requests.get(url, timeout=10)
+        
+        if response.status_code != 200:
+            logging.error(f"Erro na requisição de Desocupação: {response.status_code}")
+            return None
+        
+        data = response.json()
+        
+        if not data:
+            logging.error("Dados de Desocupação retornados estão vazios")
+            return None
+        
+        dates = []
+        values = []
+        
+        for item in data:
+            try:
+                # Converter data no formato YYYYMM para datetime
+                date_str = item.get('D3C', '')
+                
+                # Ajustar o mês para o último mês do trimestre
+                if date_str.endswith('01'):
+                    date_str = date_str[:-2] + '03'
+                elif date_str.endswith('02'):
+                    date_str = date_str[:-2] + '06'
+                elif date_str.endswith('03'):
+                    date_str = date_str[:-2] + '09'
+                elif date_str.endswith('04'):
+                    date_str = date_str[:-2] + '12'
+                
+                # Converter valor para float
+                value_str = item.get('V', '')
+                value = float(value_str) if value_str else None
+                
+                if date_str and value is not None:
+                    dates.append(date_str)
+                    values.append(value)
+            except Exception as e:
+                logging.error(f"Erro ao processar item de Desocupação: {e}")
+        
+        if not dates or not values:
+            logging.error("Nenhum dado válido de Desocupação encontrado")
+            return None
+        
+        return {
+            'dates': dates,
+            'values': values,
+            'label': 'Taxa de Desocupação',
+            'unit': '%'
+        }
     
     except Exception as e:
-        logging.error(f"Erro ao buscar dados do Desocupação: {e}")
+        logging.error(f"Erro ao buscar dados de Desocupação: {e}")
         return None

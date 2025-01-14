@@ -1,46 +1,79 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1>Bem-vindo ao Blog de Evandro Farias</h1>
-        <p class="lead">
-            Aqui você encontrará análises e visualizações dos principais indicadores socioeconômicos do Brasil,
-            Nordeste e Paraíba. São utilizadas informações do SIDRA (IBGE), IPEA Data e Banco Central. Mais informações
-            sobre este e outros projetos podem ser encontradas <a href="https://github.com/evandrofarias/blog-economico">aqui </a>,
-            no meu GitHub ou pelo e-mail: <a href="mailto:evandro.farias@academico.ufpb.br">evandro.farias@academico.ufpb.br</a>.
-        </p>
+<div class="row mb-4">
+    <div class="col-12 text-center bg-light py-5 rounded shadow-sm">
+        <h1 class="display-4 text-primary mb-4" style="font-weight: 300; color: #2c3e50 !important;">
+            Bem-vindo ao Blog de Evandro Farias
+        </h1>
+        <div class="container">
+            <p class="lead text-muted" style="line-height: 1.6; max-width: 800px; margin: 0 auto; font-weight: 300;">
+                Explore análises e visualizações dos principais indicadores socioeconômicos do Brasil, 
+                Nordeste e Paraíba. Utilizamos dados de fontes oficiais como SIDRA (IBGE), IPEA Data 
+                e Banco Central para fornecer insights precisos e atualizados.
+            </p>
+            <div class="mt-4">
+                <a href="https://www.linkedin.com/in/evandro-farias-625939a2"
+                    class="btn btn-outline-dark me-3">
+                    <i class="fab fa-linkedin me-2"></i> LinkedIn</a>  
+                <a href="https://github.com/evandroUfpb" 
+                    class="btn btn-outline-dark me-3">
+                    <i class="fab fa-github"></i> GitHub</a>    
+                <a href="mailto:evandro.farias@academico.ufpb.br" 
+                   class="btn btn-outline-dark me-3">
+                    <i class="far fa-envelope me-2"></i>Contato
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-4">
-        <div class="card">
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h3 class="card-title mb-0">PIB do Brasil</h3>
+            </div>
             <div class="card-body">
-                <h5 class="card-title">PIB</h5>
-                <p class="card-text">Produto Interno Bruto brasileiro.</p>
                 <div id="pib-chart" class="chart-container"></div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card">
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h3 class="card-title mb-0">Taxa de Desocupação</h3>
+            </div>
             <div class="card-body">
-                <h5 class="card-title">IPCA</h5>
-                <p class="card-text">Índice de Preços ao Consumidor Amplo.</p>
+                <div id="desocupacao-chart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h3 class="card-title mb-0">IPCA</h3>
+            </div>
+            <div class="card-body">
                 <div id="ipca-chart" class="chart-container"></div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">SELIC</h5>
-                <p class="card-text">Taxa básica de juros da economia.</p>
-                <div id="selic-chart" class="chart-container"></div>
-            </div>
-        </div>
-    </div>
 </div>
+
+<style>
+.chart-container {
+    width: 100%;
+    height: 300px;
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 250px;
+    }
+}
+</style>
 
 {% endblock %}

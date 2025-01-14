@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Dashboard Brasil</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">PIB Trimestral</h5>
+                    <div id="pib-chart-full" class="chart-container" style="width: 100%; height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Taxa de Desocupação</h5>
+                    <div id="desocupacao-chart-full" class="chart-container" style="width: 100%; height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">IPCA</h5>
+                    <div id="ipca-chart-full" class="chart-container" style="width: 100%; height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Taxa SELIC</h5>
+                    <div id="selic-chart-full" class="chart-container" style="width: 100%; height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Incluir Plotly.js -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Reutilizar a função loadChartData do index.html
+    // Adicionar chamadas para os gráficos do dashboard Brasil
+    const chartConfigs = [
+        { 
+            id: 'pib-chart-full', 
+            endpoint: '/api/pib', 
+            title: 'PIB Trimestral',
+            options: {
+                yTickFormat: '.2f'
+            }
+        },
+        { 
+            id: 'desocupacao-chart-full', 
+            endpoint: '/api/desocupacao', 
+            title: 'Taxa de Desocupação',
+            options: {
+                yTickFormat: '.2f',
+                xAxisRange: [
+                    new Date('2012-01-01'), 
+                    new Date('2024-12-31')
+                ]
+            }
+        },
+        { 
+            id: 'ipca-chart-full', 
+            endpoint: '/api/ipca', 
+            title: 'IPCA (desde 2002)', 
+            options: { 
+                startYear: 2002,
+                yTickFormat: '.2f'
+            }
+        },
+        { 
+            id: 'selic-chart-full', 
+            endpoint: '/api/selic', 
+            title: 'Taxa SELIC (desde 2002)', 
+            options: { 
+                startYear: 2002,
+                yTickFormat: '.2f'
+            }
+        }
+    ];
+
+    // Carregar dados para cada gráfico configurado
+    chartConfigs.forEach(config => {
+        loadChartData(
+            config.endpoint,
+            config.id,
+            config.title,
+            config.options
+        );
+    });
+});
+</script>
+{% endblock %}
